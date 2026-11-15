@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Centro Médico Vida Sana — servicio web estático de reserva de horas médicas. Proyecto académico DevOps, datos ficticios.">
+<meta name="color-scheme" content="dark light">
+<title>Vida Sana · Reserva de horas médicas</title>
+<link rel="stylesheet" href="styles.css">
+<script>
+  try {
+    var t = localStorage.getItem('vital.theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M2 12h4l2-6 3 12 3-9 2 3h6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.6-7-9.4A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7 2.6C19 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-stetho" viewBox="0 0 24 24"><path d="M6 3v6a4 4 0 0 0 8 0V3M4 3h3M13 3h3M10 13v2a5 5 0 0 0 9 3"/><circle cx="20" cy="16" r="2"/></symbol>
+    <symbol id="i-baby" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5 21c1.4-4 3.9-6 7-6s5.6 2 7 6M10 6.5h.01M14 6.5h.01"/></symbol>
+    <symbol id="i-derm" viewBox="0 0 24 24"><path d="M11 3l1.7 4.4L17 9l-4.3 1.6L11 15l-1.7-4.4L5 9l4.3-1.6zM18 14l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+    <symbol id="i-bone" viewBox="0 0 24 24"><path d="M8 16l8-8M6.5 14.5a2.4 2.4 0 1 0 3 3l1-1-3-3zM17.5 9.5a2.4 2.4 0 1 0-3-3l-1 1 3 3z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4c0 9-5 14-12 14H5c0-8 5-13 15-14zM5 20c3-6 7-9 12-10"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+    <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1M20.5 4v4.5H16"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 3h3.5l2 5-2.4 1.5a12.5 12.5 0 0 0 6.4 6.4L16 13.5l5 2V19a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 3 5.2A2 2 0 0 1 5 3z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.4 8.2-8 9-4.6-.8-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-4.5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4h5v3M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L20.5 7.5l-4-4L4 16zM14.5 5.5l4 4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c1.3-4 4-6 7.5-6s6.2 2 7.5 6"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8.2V20l-4-2.2v-4.6z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m0 0l-5.5-5.5M19 12l-5.5 5.5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17h.01"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01M11 7.5h5M11 16.5h5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l9 4.2-9 4.2-9-4.2zM3 7.2v9.6L12 21l9-4.2V7.2M12 11.4V21"/></symbol>
+    <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 7.5v9M8.5 9H13a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3H6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M15 9V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 20V5m0 0l-6 6m6-6l6 6"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6 8.5-6"/></symbol>
+  </defs>
+</svg>
+
+<div class="bg" aria-hidden="true">
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+  <div class="bg-grain"></div>
+</div>
+
+<a class="skip" href="#reservar">Saltar al formulario de reserva</a>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#inicio">
+      <span class="brand-mark"><svg class="i"><use href="#i-pulse"/></svg></span>
+      <span class="brand-txt">
+        <strong>Vida Sana</strong>
+        <small>Reserva de horas médicas</small>
+      </span>
+    </a>
+
+    <nav class="nav-links" aria-label="Secciones del sitio">
+      <a href="#reservar" data-nav="reservar">Reservar</a>
+      <a href="#mis-horas" data-nav="mis-horas">Mis horas</a>
+      <a href="#atencion" data-nav="atencion">Atención</a>
+      <a href="#estado" data-nav="estado">Estado del servicio</a>
+    </nav>
+
+    <div class="nav-act">
+      <span class="pill pill-live" title="Servicio local en ejecución">
+        <span class="dot"></span><span class="pill-txt">Operativo</span>
+      </span>
+      <button class="icon-btn" id="theme-btn" type="button" aria-pressed="false" title="Cambiar tema claro / oscuro">
+        <svg class="i i-sun"><use href="#i-sun"/></svg>
+        <svg class="i i-moon"><use href="#i-moon"/></svg>
+        <span class="sr">Cambiar tema</span>
+      </button>
+      <a class="btn btn-primary btn-sm nav-cta" href="#reservar">
+        <svg class="i"><use href="#i-cal"/></svg><span>Reservar</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ══════════ HERO ══════════ -->
+  <section class="hero" id="inicio">
+    <div class="wrap hero-in">
+      <div class="hero-copy" data-reveal>
+        <span class="eyebrow"><svg class="i"><use href="#i-shield"/></svg> Centro Médico Vida Sana · Santiago</span>
+        <h1>Tu hora médica,<br><em>sin llamadas ni esperas.</em></h1>
+        <p class="lead">
+          Agenda, reprograma o cancela tu atención en línea. Elige especialidad,
+          profesional y bloque horario, y recibe tu comprobante al instante.
+          Servicio web estático servido con Nginx sobre Docker.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#reservar"><svg class="i"><use href="#i-cal"/></svg> Reservar una hora</a>
+          <a class="btn btn-ghost" href="#estado"><svg class="i"><use href="#i-activity"/><use href="#i-pulse"/></svg> Ver estado del servicio</a>
+        </div>
+        <dl class="hero-stats">
+          <div><dt>Especialidades</dt><dd>6</dd></div>
+          <div><dt>Profesionales</dt><dd>8</dd></div>
+          <div><dt>Bloques por jornada</dt><dd>18</dd></div>
+          <div><dt>Hora local</dt><dd class="mono" id="hero-clock">--:--:--</dd></div>
+        </dl>
+      </div>
+
+      <aside class="monitor" data-reveal aria-label="Monitor del servicio">
+        <header class="monitor-top">
+          <span class="mono tiny">MONITOR · nginx:alpine</span>
+          <span class="pill pill-ok"><span class="dot"></span> 200 OK</span>
+        </header>
+        <div class="ecg">
+          <svg viewBox="0 0 600 130" preserveAspectRatio="none" aria-hidden="true">
+            <path class="ecg-base" d="M0 65 H60 l12-4 8 8 10-42 12 76 12-46 10 8 h56 l12-4 8 8 10-42 12 76 12-46 10 8 h56 l12-4 8 8 10-42 12 76 12-46 10 8 h56 l12-4 8 8 10-42 12 76 12-46 10 8 H600"/>
+            <path class="ecg-live" d="M0 65 H60 l12-4 8 8 10-42 12 76 12-46 10 8 h56 l12-4 8 8 10-42 12 76 12-46 10 8 h56 l12-4 8 8 10-42 12 76 12-46 10 8 h56 l12-4 8 8 10-42 12 76 12-46 10 8 H600"/>
+          </svg>
+          <span class="ecg-sweep"></span>
+        </div>
+        <div class="readouts">
+          <div class="ro ro-teal"><span class="ro-k">Latencia</span><span class="ro-v mono" id="ro-lat">42</span><span class="ro-u">ms</span></div>
+          <div class="ro ro-cyan"><span class="ro-k">CPU</span><span class="ro-v mono" id="ro-cpu">0.4</span><span class="ro-u">%</span></div>
+          <div class="ro ro-violet"><span class="ro-k">Memoria</span><span class="ro-v mono" id="ro-mem">9.2</span><span class="ro-u">MiB</span></div>
+        </div>
+        <footer class="monitor-bot mono tiny">
+          <span>contenedor: reserva-horas-web</span>
+          <span>puerto: 8080 → 80</span>
+        </footer>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ══════════ RESERVAR ══════════ -->
+  <section class="section" id="reservar">
+    <div class="wrap">
+      <header class="sec-head" data-reveal>
+        <span class="sec-num mono">01</span>
+        <div>
+          <h2>Reservar hora médica</h2>
+          <p>Completa los cuatro pasos. La disponibilidad se recalcula al cambiar de profesional o de fecha.</p>
+        </div>
+      </header>
+
+      <div class="book">
+        <form class="card form" id="book-form" novalidate data-reveal>
+
+          <fieldset class="step">
+            <legend><span class="step-n mono">1</span> Especialidad</legend>
+            <div class="chips-esp" id="esp-chips" role="radiogroup" aria-label="Especialidad"></div>
+            <p class="err" id="err-esp" hidden><svg class="i"><use href="#i-alert"/></svg> Selecciona una especialidad.</p>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="step-n mono">2</span> Profesional y fecha</legend>
+            <div class="grid-2">
+              <label class="field">
+                <span class="lbl">Profesional</span>
+                <span class="sel-wrap">
+                  <select id="prof-sel" disabled><option value="">Primero elige una especialidad</option></select>
+                  <svg class="i sel-ico"><use href="#i-down"/></svg>
+                </span>
+                <span class="hint" id="prof-hint">Duración y sede según especialidad.</span>
+              </label>
+              <label class="field">
+                <span class="lbl">Fecha de atención</span>
+                <input type="date" id="fecha-inp">
+                <span class="hint">Domingos cerrado · sábado hasta 13:00 hrs.</span>
+              </label>
+            </div>
+            <p class="err" id="err-prof" hidden><svg class="i"><use href="#i-alert"/></svg> Selecciona un profesional.</p>
+            <p class="err" id="err-fecha" hidden><svg class="i"><use href="#i-alert"/></svg> Elige una fecha válida.</p>
+            <div class="days" id="day-strip" role="group" aria-label="Próximos días disponibles"></div>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="step-n mono">3</span> Bloque horario</legend>
+            <div class="slots-head">
+              <span class="mono tiny" id="slots-count">Selecciona profesional y fecha</span>
+              <ul class="legend">
+                <li><i class="sw sw-free"></i> Libre</li>
+                <li><i class="sw sw-taken"></i> Ocupado</li>
+                <li><i class="sw sw-sel"></i> Elegido</li>
+              </ul>
+            </div>
+            <div class="slots" id="slots" role="radiogroup" aria-label="Bloque horario"></div>
+            <p class="err" id="err-hora" hidden><svg class="i"><use href="#i-alert"/></svg> Selecciona un bloque horario disponible.</p>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="step-n mono">4</span> Datos de la reserva</legend>
+            <div class="grid-2">
+              <label class="field">
+                <span class="lbl">Nombre del paciente</span>
+                <input type="text" id="nombre-inp" maxlength="60" placeholder="Paciente de prueba" autocomplete="off">
+                <span class="hint">Usa un nombre ficticio: este sitio no almacena datos reales.</span>
+              </label>
+              <label class="field">
+                <span class="lbl">Previsión</span>
+                <span class="sel-wrap">
+                  <select id="prev-sel">
+                    <option>Fonasa</option><option>Isapre</option><option>Particular</option>
+                  </select>
+                  <svg class="i sel-ico"><use href="#i-down"/></svg>
+                </span>
+                <span class="hint">Dato de demostración, sin validación comercial.</span>
+              </label>
+            </div>
+            <label class="field">
+              <span class="lbl">Motivo de la consulta <em>(opcional)</em></span>
+              <textarea id="motivo-inp" rows="3" maxlength="200" placeholder="Ej.: control anual, revisión de exámenes, consulta de prueba…"></textarea>
+              <span class="hint"><span id="motivo-count" class="mono">0</span>/200 caracteres</span>
+            </label>
+            <p class="err" id="err-nombre" hidden><svg class="i"><use href="#i-alert"/></svg> Ingresa un nombre de al menos 3 letras.</p>
+            <label class="check">
+              <input type="checkbox" id="ficticio-chk">
+              <span class="box"><svg class="i"><use href="#i-check"/></svg></span>
+              <span>Declaro que los datos ingresados son <strong>ficticios</strong> y corresponden a una prueba académica.</span>
+            </label>
+            <p class="err" id="err-chk" hidden><svg class="i"><use href="#i-alert"/></svg> Debes confirmar el uso de datos ficticios.</p>
+          </fieldset>
+
+          <div class="form-foot">
+            <button class="btn btn-primary btn-lg" type="submit">
+              <svg class="i"><use href="#i-check"/></svg> Confirmar reserva
+            </button>
+            <button class="btn btn-ghost" type="button" id="form-reset">
+              <svg class="i"><use href="#i-refresh"/></svg> Limpiar
+            </button>
+          </div>
+        </form>
+
+        <aside class="summary-col" data-reveal>
+          <div class="card summary" id="summary">
+            <header class="sum-head">
+              <span class="mono tiny">RESUMEN DE TU HORA</span>
+              <svg class="i sum-ico"><use href="#i-pulse"/></svg>
+            </header>
+            <div class="sum-body" id="sum-body"></div>
+            <footer class="sum-foot">
+              <svg class="i"><use href="#i-shield"/></svg>
+              <span>Sin base de datos ni API. Todo ocurre en tu navegador.</span>
+            </footer>
+          </div>
+          <div class="card tip">
+            <h3><svg class="i"><use href="#i-info"/></svg> Antes de asistir</h3>
+            <ul>
+              <li>Llega 15 minutos antes con tu documento de identidad.</li>
+              <li>Cancela o reprograma hasta 12 horas antes para liberar el cupo.</li>
+              <li>Trae tus exámenes previos si la consulta es de control.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ MIS HORAS ══════════ -->
+  <section class="section alt" id="mis-horas">
+    <div class="wrap">
+      <header class="sec-head" data-reveal>
+        <span class="sec-num mono">02</span>
+        <div>
+          <h2>Mis horas</h2>
+          <p>Reservas de demostración precargadas. Puedes buscar, filtrar, ordenar, reprogramar y cancelar con opción de deshacer.</p>
+        </div>
+        <div class="sec-head-act">
+          <button class="btn btn-ghost btn-sm" type="button" id="export-csv"><svg class="i"><use href="#i-dl"/></svg> Exportar CSV</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="reset-demo"><svg class="i"><use href="#i-refresh"/></svg> Restaurar demo</button>
+        </div>
+      </header>
+
+      <div class="card toolbar" data-reveal>
+        <div class="views" role="group" aria-label="Vistas guardadas">
+          <button class="view-btn" type="button" data-view="proximas"><svg class="i"><use href="#i-cal"/></svg> Próximas</button>
+          <button class="view-btn" type="button" data-view="historial"><svg class="i"><use href="#i-list"/></svg> Historial</button>
+          <button class="view-btn" type="button" data-view="todas"><svg class="i"><use href="#i-filter"/></svg> Todas</button>
+        </div>
+
+        <div class="tools">
+          <label class="search">
+            <svg class="i"><use href="#i-search"/></svg>
+            <input type="search" id="q-inp" placeholder="Buscar folio, profesional, especialidad…" autocomplete="off" aria-label="Buscar reservas">
+            <button type="button" class="clear-q" id="q-clear" hidden aria-label="Limpiar búsqueda"><svg class="i"><use href="#i-x"/></svg></button>
+          </label>
+          <label class="sel-wrap sm">
+            <select id="esp-filter" aria-label="Filtrar por especialidad"><option value="">Toda especialidad</option></select>
+            <svg class="i sel-ico"><use href="#i-down"/></svg>
+          </label>
+          <label class="sel-wrap sm">
+            <select id="sort-sel" aria-label="Ordenar reservas">
+              <option value="fecha-asc">Fecha ↑ (más próxima)</option>
+              <option value="fecha-desc">Fecha ↓ (más lejana)</option>
+              <option value="recientes">Creadas recientemente</option>
+              <option value="especialidad">Especialidad A–Z</option>
+              <option value="profesional">Profesional A–Z</option>
+            </select>
+            <svg class="i sel-ico"><use href="#i-down"/></svg>
+          </label>
+        </div>
+
+        <div class="filters">
+          <div class="chips" id="estado-chips" role="group" aria-label="Filtrar por estado"></div>
+          <label class="check sm sel-all">
+            <input type="checkbox" id="sel-all">
+            <span class="box"><svg class="i"><use href="#i-check"/></svg></span>
+            <span>Seleccionar todo</span>
+          </label>
+        </div>
+
+        <div class="bulk" id="bulk" hidden>
+          <span><strong id="bulk-n">0</strong> seleccionadas</span>
+          <div>
+            <button class="btn btn-danger btn-sm" type="button" id="bulk-cancel"><svg class="i"><use href="#i-x"/></svg> Cancelar seleccionadas</button>
+            <button class="btn btn-ghost btn-sm" type="button" id="bulk-clear">Quitar selección</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="count mono tiny" id="list-count" aria-live="polite">—</p>
+      <div class="list" id="list"></div>
+
+      <div class="empty" id="empty" hidden>
+        <svg class="i"><use href="#i-search"/></svg>
+        <h3>Ninguna hora coincide con el filtro</h3>
+        <p>Prueba con otro estado, otra especialidad o limpia la búsqueda.</p>
+        <button class="btn btn-ghost btn-sm" type="button" id="empty-clear"><svg class="i"><use href="#i-refresh"/></svg> Limpiar filtros</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ ATENCIÓN ══════════ -->
+  <section class="section" id="atencion">
+    <div class="wrap">
+      <header class="sec-head" data-reveal>
+        <span class="sec-num mono">03</span>
+        <div>
+          <h2>Datos generales de atención</h2>
+          <p>Información del centro, sedes y políticas de agendamiento. Todos los datos son ficticios.</p>
+        </div>
+      </header>
+
+      <div class="info-grid">
+        <article class="card info-card" data-reveal>
+          <span class="info-ico t-teal"><svg class="i"><use href="#i-clock"/></svg></span>
+          <h3>Horarios</h3>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>Lunes a viernes</th><td class="mono">08:00 – 18:00</td></tr>
+              <tr><th>Sábado</th><td class="mono">08:00 – 13:00</td></tr>
+              <tr><th>Domingo y festivos</th><td class="mono">Cerrado</td></tr>
+              <tr><th>Colación</th><td class="mono">13:00 – 14:00</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card info-card" data-reveal>
+          <span class="info-ico t-cyan"><svg class="i"><use href="#i-pin"/></svg></span>
+          <h3>Sedes</h3>
+          <ul class="plain">
+            <li><strong>Sede Central</strong><br>Av. Salud 1234, Santiago <em>(ficticia)</em><br><span class="mono tiny">Metro Los Héroes · 6 box</span></li>
+            <li><strong>Sede Norte</strong><br>Calle Los Aromos 851, Recoleta <em>(ficticia)</em><br><span class="mono tiny">Estacionamiento gratuito · 4 box</span></li>
+          </ul>
+        </article>
+
+        <article class="card info-card" data-reveal>
+          <span class="info-ico t-amber"><svg class="i"><use href="#i-cal"/></svg></span>
+          <h3>Políticas de agenda</h3>
+          <ul class="plain">
+            <li>Bloques de <strong>30 minutos</strong>; la duración real varía por especialidad.</li>
+            <li>Reserva con hasta <strong>60 días</strong> de anticipación.</li>
+            <li>Cancelación o cambio hasta <strong>12 horas antes</strong>.</li>
+            <li>La inasistencia sin aviso libera el cupo y queda registrada.</li>
+          </ul>
+        </article>
+
+        <article class="card info-card" data-reveal>
+          <span class="info-ico t-violet"><svg class="i"><use href="#i-phone"/></svg></span>
+          <h3>Contacto</h3>
+          <ul class="plain">
+            <li><svg class="i"><use href="#i-phone"/></svg> <span class="mono">600 123 456</span> <em>(ficticio)</em></li>
+            <li><svg class="i"><use href="#i-mail"/></svg> <span class="mono">mesa.ayuda@vidasana.test</span></li>
+            <li><svg class="i"><use href="#i-info"/></svg> Anexo interno <span class="mono">100</span></li>
+          </ul>
+        </article>
+
+        <article class="card info-card" data-reveal>
+          <span class="info-ico t-lime"><svg class="i"><use href="#i-user"/></svg></span>
+          <h3>Accesibilidad</h3>
+          <ul class="plain">
+            <li>Interfaz navegable por teclado y con foco visible.</li>
+            <li>Contraste alto y tema claro / oscuro conmutable.</li>
+            <li>Respeta <span class="mono">prefers-reduced-motion</span>.</li>
+            <li>Etiquetas y mensajes de error asociados a cada campo.</li>
+          </ul>
+        </article>
+
+        <article class="card info-card warn-card" data-reveal>
+          <span class="info-ico t-coral"><svg class="i"><use href="#i-shield"/></svg></span>
+          <h3>Privacidad y datos</h3>
+          <p>Este sitio es una <strong>demostración académica estática</strong>: no envía información a ningún servidor, no usa base de datos y no registra datos personales. Las reservas se guardan solo en el almacenamiento local de tu navegador y puedes borrarlas con «Restaurar demo».</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ ESTADO ══════════ -->
+  <section class="section alt" id="estado">
+    <div class="wrap">
+      <header class="sec-head" data-reveal>
+        <span class="sec-num mono">04</span>
+        <div>
+          <h2>Estado del servicio</h2>
+          <p>Ficha del despliegue local y panel de observabilidad de demostración.</p>
+        </div>
+      </header>
+
+      <div class="notice" data-reveal>
+        <svg class="i"><use href="#i-info"/></svg>
+        <p><strong>Panel de demostración.</strong> Las métricas y los logs de abajo se generan en el navegador para ilustrar el monitoreo. Las evidencias reales del informe se obtienen en la terminal con <code>docker compose ps</code>, <code>docker logs reserva-horas-web</code> y <code>docker stats --no-stream</code>.</p>
+      </div>
+
+      <div class="status-grid">
+        <div class="card deploy" data-reveal>
+          <h3><svg class="i"><use href="#i-box"/></svg> Ficha del despliegue</h3>
+          <table class="mini-table kv">
+            <tbody>
+              <tr><th>Servicio</th><td>Reserva de horas médicas (estático)</td></tr>
+              <tr><th>Versión</th><td class="mono">1.0.0</td></tr>
+              <tr><th>Imagen base</th><td class="mono">nginx:alpine</td></tr>
+              <tr><th>Imagen del proyecto</th><td class="mono">reserva-horas-web:1.0.0</td></tr>
+              <tr><th>Contenedor</th><td class="mono">reserva-horas-web</td></tr>
+              <tr><th>Puertos</th><td class="mono">0.0.0.0:8080 → 80/tcp</td></tr>
+              <tr><th>Orquestación</th><td class="mono">docker compose</td></tr>
+              <tr><th>Reinicio</th><td class="mono">unless-stopped</td></tr>
+              <tr><th>Entorno</th><td class="mono">local · Docker Desktop</td></tr>
+              <tr><th>Sesión activa desde</th><td class="mono" id="uptime">00:00:00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card checks" data-reveal>
+          <h3><svg class="i"><use href="#i-shield"/></svg> Verificaciones</h3>
+          <ul class="check-list" id="check-list"></ul>
+          <h3 class="mt"><svg class="i"><use href="#i-branch"/></svg> Trazabilidad</h3>
+          <ul class="plain tiny-list">
+            <li>Cambios versionados en Git, integrados por <em>pull request</em> hacia <span class="mono">main</span>.</li>
+            <li><span class="mono">.env</span> excluido del repositorio; solo se publica <span class="mono">.env.example</span>.</li>
+            <li>Workflow <span class="mono">devops-automation.yml</span> valida estructura, construye la imagen y prueba el servicio.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card metrics" data-reveal>
+        <header class="metrics-head">
+          <h3><svg class="i"><use href="#i-pulse"/></svg> Métricas del contenedor <span class="tag">simuladas</span></h3>
+          <label class="sel-wrap sm">
+            <select id="range-sel" aria-label="Ventana de muestras">
+              <option value="20">Últimas 20 muestras</option>
+              <option value="40" selected>Últimas 40 muestras</option>
+              <option value="60">Últimas 60 muestras</option>
+            </select>
+            <svg class="i sel-ico"><use href="#i-down"/></svg>
+          </label>
+        </header>
+        <div class="charts">
+          <figure class="chart c-teal">
+            <figcaption><span>Latencia de respuesta</span><strong class="mono" id="m-lat">42 ms</strong></figcaption>
+            <svg viewBox="0 0 300 80" preserveAspectRatio="none"><polyline id="sp-lat"/><polyline class="ghost" id="sp-lat-g"/></svg>
+            <small class="mono">objetivo &lt; 300 ms · p95</small>
+          </figure>
+          <figure class="chart c-cyan">
+            <figcaption><span>Uso de CPU</span><strong class="mono" id="m-cpu">0.4 %</strong></figcaption>
+            <svg viewBox="0 0 300 80" preserveAspectRatio="none"><polyline id="sp-cpu"/><polyline class="ghost" id="sp-cpu-g"/></svg>
+            <small class="mono">1 vCPU asignada</small>
+          </figure>
+          <figure class="chart c-violet">
+            <figcaption><span>Memoria residente</span><strong class="mono" id="m-mem">9.2 MiB</strong></figcaption>
+            <svg viewBox="0 0 300 80" preserveAspectRatio="none"><polyline id="sp-mem"/><polyline class="ghost" id="sp-mem-g"/></svg>
+            <small class="mono">límite 128 MiB</small>
+          </figure>
+          <figure class="chart c-amber">
+            <figcaption><span>Peticiones servidas</span><strong class="mono" id="m-req">0</strong></figcaption>
+            <svg viewBox="0 0 300 80" preserveAspectRatio="none"><polyline id="sp-req"/><polyline class="ghost" id="sp-req-g"/></svg>
+            <small class="mono">acumulado de la sesión</small>
+          </figure>
+        </div>
+      </div>
+
+      <div class="card logs" data-reveal>
+        <header class="logs-head">
+          <h3><svg class="i"><use href="#i-server"/></svg> Log de accesos <span class="tag">simulado</span></h3>
+          <div class="logs-act">
+            <button class="btn btn-ghost btn-sm" type="button" id="logs-toggle" aria-pressed="false">
+              <svg class="i i-pause"><use href="#i-pause"/></svg>
+              <svg class="i i-play"><use href="#i-play"/></svg>
+              <span id="logs-toggle-txt">Pausar</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" type="button" id="logs-copy"><svg class="i"><use href="#i-copy"/></svg> Copiar</button>
+            <button class="btn btn-ghost btn-sm" type="button" id="logs-clear"><svg class="i"><use href="#i-trash"/></svg> Limpiar</button>
+          </div>
+        </header>
+        <pre class="log-body mono" id="log-body" tabindex="0" aria-label="Log de accesos simulado" aria-live="off"></pre>
+        <footer class="logs-foot mono tiny">
+          <span id="log-n">0 líneas</span>
+          <span>formato: combined · nginx access_log → stdout</span>
+        </footer>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <span class="brand-mark sm"><svg class="i"><use href="#i-pulse"/></svg></span>
+      <p><strong>Centro Médico Vida Sana</strong> — proyecto académico DevOps, IACC · Unidad 1.</p>
+      <p class="tiny dim">Nombres, direcciones, teléfonos y reservas son ficticios. Sin API, sin base de datos, sin datos personales.</p>
+    </div>
+    <div class="foot-meta mono tiny">
+      <span>v1.0.0</span><span>nginx:alpine</span><span>localhost:8080</span>
+      <a href="#inicio" class="to-top"><svg class="i"><use href="#i-up"/></svg> Volver arriba</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Drawer detalle -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+  <header class="drawer-head">
+    <div>
+      <span class="mono tiny">DETALLE DE LA RESERVA</span>
+      <h3 id="drawer-title">—</h3>
+    </div>
+    <button class="icon-btn" type="button" id="drawer-close" aria-label="Cerrar detalle"><svg class="i"><use href="#i-x"/></svg></button>
+  </header>
+  <div class="drawer-body" id="drawer-body"></div>
+  <footer class="drawer-foot" id="drawer-foot"></footer>
+</aside>
+
+<!-- Modal reprogramar -->
+<div class="modal" id="modal-reprog" role="dialog" aria-modal="true" aria-labelledby="rp-title" aria-hidden="true">
+  <div class="modal-box">
+    <header class="modal-head">
+      <h3 id="rp-title"><svg class="i"><use href="#i-edit"/></svg> Reprogramar hora</h3>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Cerrar"><svg class="i"><use href="#i-x"/></svg></button>
+    </header>
+    <div class="modal-body">
+      <p class="rp-current" id="rp-current"></p>
+      <label class="field">
+        <span class="lbl">Nueva fecha</span>
+        <input type="date" id="rp-fecha">
+      </label>
+      <div class="slots-head"><span class="mono tiny" id="rp-count">—</span></div>
+      <div class="slots" id="rp-slots" role="radiogroup" aria-label="Nuevo bloque horario"></div>
+      <p class="err" id="rp-err" hidden><svg class="i"><use href="#i-alert"/></svg> Selecciona un bloque disponible.</p>
+    </div>
+    <footer class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+      <button class="btn btn-primary" type="button" id="rp-save"><svg class="i"><use href="#i-check"/></svg> Guardar cambio</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal confirmar -->
+<div class="modal" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="cf-title" aria-hidden="true">
+  <div class="modal-box sm">
+    <header class="modal-head">
+      <h3 id="cf-title"><svg class="i"><use href="#i-alert"/></svg> <span id="cf-title-txt">Confirmar</span></h3>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Cerrar"><svg class="i"><use href="#i-x"/></svg></button>
+    </header>
+    <div class="modal-body"><p id="cf-text"></p></div>
+    <footer class="modal-foot">
+      <button class="btn btn-ghost" type="button" data-close-modal>Volver</button>
+      <button class="btn btn-danger" type="button" id="cf-ok">Confirmar</button>
+    </footer>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" role="region" aria-label="Notificaciones" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ───────── utilidades ───────── */
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+  var iso = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+  var parse = function (s) { var p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+  var addDays = function (d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; };
+  var TODAY = new Date(); TODAY.setHours(0, 0, 0, 0);
+  var MAXISO = iso(addDays(TODAY, 60));
+  var TODAYISO = iso(TODAY);
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var fmtLong = new Intl.DateTimeFormat('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  var fmtShort = new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'short' });
+  var fmtDow = new Intl.DateTimeFormat('es-CL', { weekday: 'short' });
+  var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+
+  function hash(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(seed) { var a = seed >>> 0; return function () { a += 0x6D2B79F5; var t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  var store = {
+    get: function (k, fb) { try { var v = localStorage.getItem(k); return v == null ? fb : JSON.parse(v); } catch (e) { return fb; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    raw: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* ───────── datos del dominio (ficticios) ───────── */
+  var ESP = [
+    { id: 'mg', n: 'Medicina General', ico: 'i-stetho', dur: 30, tone: 'teal' },
+    { id: 'pd', n: 'Pediatría', ico: 'i-baby', dur: 30, tone: 'cyan' },
+    { id: 'cd', n: 'Cardiología', ico: 'i-heart', dur: 40, tone: 'coral' },
+    { id: 'dm', n: 'Dermatología', ico: 'i-derm', dur: 25, tone: 'violet' },
+    { id: 'tr', n: 'Traumatología', ico: 'i-bone', dur: 30, tone: 'amber' },
+    { id: 'nt', n: 'Nutrición', ico: 'i-leaf', dur: 45, tone: 'lime' }
+  ];
+  var PRO = [
+    { id: 'p1', n: 'Dra. Andrea Soto', esp: 'mg', sede: 'Sede Central' },
+    { id: 'p2', n: 'Dr. Rodrigo Salas', esp: 'mg', sede: 'Sede Norte' },
+    { id: 'p3', n: 'Dra. Carolina Pérez', esp: 'pd', sede: 'Sede Central' },
+    { id: 'p4', n: 'Dr. Manuel Rojas', esp: 'cd', sede: 'Sede Central' },
+    { id: 'p5', n: 'Dra. Paula Cárdenas', esp: 'cd', sede: 'Sede Norte' },
+    { id: 'p6', n: 'Dra. Valentina Muñoz', esp: 'dm', sede: 'Sede Central' },
+    { id: 'p7', n: 'Dr. Ignacio Fuentes', esp: 'tr', sede: 'Sede Norte' },
+    { id: 'p8', n: 'Dra. Francisca León', esp: 'nt', sede: 'Sede Central' }
+  ];
+  var ESTADOS = [
+    { id: 'confirmada', n: 'Confirmada', tone: 'teal', ico: 'i-check' },
+    { id: 'pendiente', n: 'Pendiente', tone: 'amber', ico: 'i-clock' },
+    { id: 'atendida', n: 'Atendida', tone: 'cyan', ico: 'i-user' },
+    { id: 'cancelada', n: 'Cancelada', tone: 'coral', ico: 'i-x' }
+  ];
+  var espById = function (id) { return ESP.filter(function (e) { return e.id === id; })[0]; };
+  var proById = function (id) { return PRO.filter(function (p) { return p.id === id; })[0]; };
+  var estById = function (id) { return ESTADOS.filter(function (e) { return e.id === id; })[0]; };
+
+  function nextBusiness(from, skip) {
+    var d = addDays(from, skip == null ? 1 : skip);
+    while (d.getDay() === 0) d = addDays(d, 1);
+    return d;
+  }
+
+  function seed() {
+    var d1 = iso(nextBusiness(TODAY, 2)), d2 = iso(nextBusiness(TODAY, 6)), d3 = iso(nextBusiness(TODAY, 9));
+    var p1 = iso(addDays(TODAY, -5)), p2 = iso(addDays(TODAY, -12));
+    return [
+      mk('CM-2026-0148', 'Paciente de prueba', 'mg', 'p1', d1, '09:30', 'Fonasa', 'Control anual de rutina', 'confirmada', -3),
+      mk('CM-2026-0151', 'Paciente de prueba', 'cd', 'p4', d2, '11:00', 'Isapre', 'Revisión de exámenes cardiológicos', 'confirmada', -2),
+      mk('CM-2026-0153', 'Paciente de prueba', 'nt', 'p8', d3, '16:00', 'Particular', 'Primera consulta de nutrición', 'pendiente', -1),
+      mk('CM-2026-0132', 'Paciente de prueba', 'pd', 'p3', p1, '10:00', 'Fonasa', 'Control de niño sano', 'atendida', -14),
+      mk('CM-2026-0126', 'Paciente de prueba', 'dm', 'p6', p2, '15:30', 'Fonasa', 'Consulta dermatológica de prueba', 'cancelada', -20)
+    ];
+  }
+  function mk(folio, pac, esp, pro, fecha, hora, prev, motivo, estado, creadoDias) {
+    return {
+      id: 'r' + hash(folio + fecha + hora), folio: folio, paciente: pac, esp: esp, pro: pro,
+      fecha: fecha, hora: hora, prevision: prev, motivo: motivo, estado: estado,
+      creada: addDays(TODAY, creadoDias).getTime()
+    };
+  }
+
+  /* ───────── estado ───────── */
+  var S = {
+    reservas: store.get('vital.reservas.v1', null) || seed(),
+    sel: {},
+    q: '', estados: {}, esp: '', sort: 'fecha-asc', view: 'proximas',
+    form: { esp: '', pro: '', fecha: iso(nextBusiness(TODAY, 1)), hora: '' },
+    drawerId: null, rpId: null, rpFecha: '', rpHora: '',
+    logsPaused: false, range: 40, req: 0
+  };
+  var save = function () { store.set('vital.reservas.v1', S.reservas); };
+  var nextFolio = function () {
+    var max = 155;
+    S.reservas.forEach(function (r) { var n = parseInt(r.folio.split('-')[2], 10); if (n > max) max = n; });
+    return 'CM-2026-' + pad(max + 1).padStart(4, '0');
+  };
+
+  /* ───────── disponibilidad ───────── */
+  function slotsFor(proId, fechaISO, ignoreId) {
+    if (!proId || !fechaISO) return [];
+    var d = parse(fechaISO), dow = d.getDay();
+    if (isNaN(d.getTime()) || dow === 0) return [];
+    var end = dow === 6 ? 13 * 60 : 18 * 60;
+    var r = rng(hash(proId + fechaISO));
+    var mine = {};
+    S.reservas.forEach(function (x) {
+      if (x.pro === proId && x.fecha === fechaISO && x.estado !== 'cancelada' && x.id !== ignoreId) mine[x.hora] = true;
+    });
+    var now = new Date(), out = [];
+    for (var m = 8 * 60; m < end; m += 30) {
+      var h = pad(Math.floor(m / 60)) + ':' + pad(m % 60), st = 'libre';
+      if (m >= 13 * 60 && m < 14 * 60 && dow !== 6) st = 'colacion';
+      else if (mine[h]) st = 'tuyo';
+      else if (r() < 0.36) st = 'ocupado';
+      if (fechaISO === TODAYISO) {
+        var sd = new Date(TODAY.getTime()); sd.setHours(Math.floor(m / 60), m % 60, 0, 0);
+        if (sd.getTime() <= now.getTime()) st = 'pasado';
+      }
+      out.push({ hora: h, estado: st });
+    }
+    return out;
+  }
+
+  function renderSlots(host, proId, fechaISO, chosen, ignoreId, onPick) {
+    var arr = slotsFor(proId, fechaISO, ignoreId);
+    host.innerHTML = '';
+    if (!arr.length) {
+      var msg = !proId ? 'Elige primero un profesional.' :
+        (parse(fechaISO).getDay() === 0 ? 'El centro no atiende domingos. Elige otro día.' : 'Sin bloques para esta fecha.');
+      host.innerHTML = '<p class="slots-empty"><svg class="i"><use href="#i-info"/></svg> ' + esc(msg) + '</p>';
+      return arr;
+    }
+    arr.forEach(function (s) {
+      var free = s.estado === 'libre';
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'slot' + (free ? '' : ' off') + (chosen === s.hora ? ' on' : '');
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', chosen === s.hora ? 'true' : 'false');
+      b.disabled = !free;
+      b.dataset.hora = s.hora;
+      b.innerHTML = '<span class="mono">' + s.hora + '</span>' +
+        (free ? '' : '<small>' + (s.estado === 'colacion' ? 'colación' : s.estado === 'tuyo' ? 'tu reserva' : s.estado === 'pasado' ? 'pasado' : 'ocupado') + '</small>');
+      if (free) b.addEventListener('click', function () { onPick(s.hora); });
+      host.appendChild(b);
+    });
+    return arr;
+  }
+
+  /* ───────── formulario ───────── */
+  function buildEspChips() {
+    var host = $('#esp-chips'); host.innerHTML = '';
+    ESP.forEach(function (e) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip-esp t-' + e.tone + (S.form.esp === e.id ? ' on' : '');
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', S.form.esp === e.id ? 'true' : 'false');
+      b.dataset.esp = e.id;
+      b.innerHTML = '<svg class="i"><use href="#' + e.ico + '"/></svg><span>' + esc(e.n) + '</span><small class="mono">' + e.dur + ' min</small>';
+      b.addEventListener('click', function () {
+        S.form.esp = e.id; S.form.pro = ''; S.form.hora = '';
+        buildEspChips(); buildProfSel(); refreshSlots(); summary(); hideErr('esp');
+      });
+      host.appendChild(b);
+    });
+  }
+
+  function buildProfSel() {
+    var sel = $('#prof-sel'), hint = $('#prof-hint');
+    sel.innerHTML = '';
+    if (!S.form.esp) {
+      sel.disabled = true;
+      sel.innerHTML = '<option value="">Primero elige una especialidad</option>';
+      hint.textContent = 'Duración y sede según especialidad.';
+      return;
+    }
+    sel.disabled = false;
+    sel.innerHTML = '<option value="">Selecciona un profesional</option>';
+    PRO.filter(function (p) { return p.esp === S.form.esp; }).forEach(function (p) {
+      var o = document.createElement('option');
+      o.value = p.id; o.textContent = p.n + ' · ' + p.sede;
+      if (S.form.pro === p.id) o.selected = true;
+      sel.appendChild(o);
+    });
+    var e = espById(S.form.esp);
+    hint.textContent = 'Consulta de ' + e.dur + ' minutos · bloques cada 30 min.';
+  }
+
+  function buildDayStrip() {
+    var host = $('#day-strip'); host.innerHTML = '';
+    for (var i = 0; i < 14; i++) {
+      var d = addDays(TODAY, i), closed = d.getDay() === 0, k = iso(d);
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'day' + (closed ? ' off' : '') + (S.form.fecha === k ? ' on' : '');
+      b.disabled = closed;
+      b.innerHTML = '<small>' + esc(cap(fmtDow.format(d).replace('.', ''))) + '</small><strong class="mono">' + d.getDate() + '</strong><em>' + esc(fmtShort.format(d).split(' ').pop().replace('.', '')) + '</em>';
+      b.title = cap(fmtLong.format(d)) + (closed ? ' · cerrado' : '');
+      if (!closed) (function (key) {
+        b.addEventListener('click', function () {
+          S.form.fecha = key; S.form.hora = '';
+          $('#fecha-inp').value = key;
+          buildDayStrip(); refreshSlots(); summary(); hideErr('fecha');
+        });
+      })(k);
+      host.appendChild(b);
+    }
+  }
+
+  function refreshSlots() {
+    var arr = renderSlots($('#slots'), S.form.pro, S.form.fecha, S.form.hora, null, function (h) {
+      S.form.hora = h; refreshSlots(); summary(); hideErr('hora');
+    });
+    var free = arr.filter(function (s) { return s.estado === 'libre'; }).length;
+    $('#slots-count').textContent = arr.length ? (free + ' de ' + arr.length + ' bloques libres') : 'Sin disponibilidad';
+  }
+
+  function summary() {
+    var e = S.form.esp ? espById(S.form.esp) : null;
+    var p = S.form.pro ? proById(S.form.pro) : null;
+    var d = S.form.fecha ? parse(S.form.fecha) : null;
+    var rows = [
+      ['Especialidad', e ? e.n : null, 'i-stetho'],
+      ['Profesional', p ? p.n : null, 'i-user'],
+      ['Sede', p ? p.sede : null, 'i-pin'],
+      ['Fecha', d && !isNaN(d.getTime()) ? cap(fmtLong.format(d)) : null, 'i-cal'],
+      ['Bloque', S.form.hora ? S.form.hora + ' hrs' : null, 'i-clock'],
+      ['Duración', e ? e.dur + ' minutos' : null, 'i-pulse'],
+      ['Previsión', $('#prev-sel').value, 'i-shield']
+    ];
+    var done = rows.filter(function (r) { return r[1]; }).length;
+    var html = '<div class="sum-progress"><span style="width:' + Math.round(done / rows.length * 100) + '%"></span></div>';
+    html += '<ul class="sum-list">';
+    rows.forEach(function (r) {
+      html += '<li class="' + (r[1] ? 'ok' : '') + '"><svg class="i"><use href="#' + r[2] + '"/></svg>' +
+        '<span class="k">' + r[0] + '</span><span class="v">' + (r[1] ? esc(r[1]) : '<em>pendiente</em>') + '</span></li>';
+    });
+    html += '</ul>';
+    var ready = e && p && S.form.hora && d;
+    html += '<p class="sum-state ' + (ready ? 'ready' : '') + '">' +
+      (ready ? '<svg class="i"><use href="#i-check"/></svg> Listo para confirmar' : '<svg class="i"><use href="#i-info"/></svg> Completa los pasos para confirmar') + '</p>';
+    $('#sum-body').innerHTML = html;
+  }
+
+  function showErr(k, msg) {
+    var el = $('#err-' + k); if (!el) return;
+    if (msg) el.innerHTML = '<svg class="i"><use href="#i-alert"/></svg> ' + esc(msg);
+    el.hidden = false;
+  }
+  function hideErr(k) { var el = $('#err-' + k); if (el) el.hidden = true; }
+
+  function submitForm(ev) {
+    ev.preventDefault();
+    ['esp', 'prof', 'fecha', 'hora', 'nombre', 'chk'].forEach(hideErr);
+    var nombre = $('#nombre-inp').value.trim();
+    var ok = true, first = null;
+    if (!S.form.esp) { showErr('esp'); ok = false; first = first || $('#esp-chips button'); }
+    if (!S.form.pro) { showErr('prof'); ok = false; first = first || $('#prof-sel'); }
+    var d = parse(S.form.fecha);
+    if (!S.form.fecha || isNaN(d.getTime()) || S.form.fecha < TODAYISO || S.form.fecha > MAXISO) {
+      showErr('fecha', 'Elige una fecha entre hoy y los próximos 60 días.'); ok = false; first = first || $('#fecha-inp');
+    } else if (d.getDay() === 0) {
+      showErr('fecha', 'El centro no atiende domingos.'); ok = false; first = first || $('#fecha-inp');
+    }
+    if (!S.form.hora) { showErr('hora'); ok = false; first = first || $('#slots button:not([disabled])'); }
+    if (nombre.length < 3 || !/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' .-]+$/.test(nombre)) {
+      showErr('nombre', 'Ingresa un nombre de al menos 3 letras (solo letras y espacios).'); ok = false; first = first || $('#nombre-inp');
+    }
+    if (!$('#ficticio-chk').checked) { showErr('chk'); ok = false; first = first || $('#ficticio-chk'); }
+    if (!ok) {
+      toast('Revisa los campos marcados para continuar.', 'danger');
+      if (first && first.focus) first.focus();
+      return;
+    }
+    var taken = slotsFor(S.form.pro, S.form.fecha).filter(function (s) { return s.hora === S.form.hora && s.estado === 'libre'; }).length === 0;
+    if (taken) {
+      S.form.hora = ''; refreshSlots(); summary();
+      showErr('hora', 'Ese bloque acaba de ocuparse. Elige otro.');
+      toast('El bloque ya no está disponible.', 'warn');
+      return;
+    }
+    var r = {
+      id: 'r' + Date.now() + Math.floor(Math.random() * 1000),
+      folio: nextFolio(), paciente: nombre, esp: S.form.esp, pro: S.form.pro,
+      fecha: S.form.fecha, hora: S.form.hora, prevision: $('#prev-sel').value,
+      motivo: $('#motivo-inp').value.trim(), estado: 'confirmada', creada: Date.now()
+    };
+    S.reservas.unshift(r); save();
+    S.view = 'proximas'; S.q = ''; $('#q-inp').value = ''; $('#q-clear').hidden = true;
+    S.estados = {}; S.esp = ''; $('#esp-filter').value = ''; S.sort = 'fecha-asc'; $('#sort-sel').value = 'fecha-asc';
+    S.sel = {};
+    renderEstadoChips(); renderList(); markView();
+    S.form.hora = '';
+    $('#nombre-inp').value = ''; $('#motivo-inp').value = ''; $('#motivo-count').textContent = '0';
+    $('#ficticio-chk').checked = false;
+    refreshSlots(); summary();
+    bumpReq(3);
+    pushLog('POST /reservar (simulado) HTTP/1.1', 201);
+    toast('Hora ' + r.folio + ' confirmada para el ' + fmtShort.format(parse(r.fecha)) + ' a las ' + r.hora + '.', 'ok', {
+      label: 'Ver detalle', fn: function () { openDrawer(r.id); }
+    });
+    var sec = $('#mis-horas');
+    sec.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(function () {
+      var card = $('[data-card="' + r.id + '"]');
+      if (card) { card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 1600); }
+    }, reduce ? 60 : 620);
+  }
+
+  /* ───────── listado ───────── */
+  function filtered() {
+    var q = S.q.toLowerCase().trim();
+    var anyEst = Object.keys(S.estados).length > 0;
+    var out = S.reservas.filter(function (r) {
+      if (anyEst && !S.estados[r.estado]) return false;
+      if (S.esp && r.esp !== S.esp) return false;
+      if (S.view === 'proximas' && (r.fecha < TODAYISO || r.estado === 'cancelada' || r.estado === 'atendida')) return false;
+      if (S.view === 'historial' && r.fecha >= TODAYISO && r.estado !== 'cancelada' && r.estado !== 'atendida') return false;
+      if (q) {
+        var hay = [r.folio, r.paciente, r.hora, r.prevision, r.motivo, espById(r.esp).n, proById(r.pro).n, estById(r.estado).n].join(' ').toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    var cmp = {
+      'fecha-asc': function (a, b) { return (a.fecha + a.hora).localeCompare(b.fecha + b.hora); },
+      'fecha-desc': function (a, b) { return (b.fecha + b.hora).localeCompare(a.fecha + a.hora); },
+      'recientes': function (a, b) { return b.creada - a.creada; },
+      'especialidad': function (a, b) { return espById(a.esp).n.localeCompare(espById(b.esp).n) || (a.fecha + a.hora).localeCompare(b.fecha + b.hora); },
+      'profesional': function (a, b) { return proById(a.pro).n.localeCompare(proById(b.pro).n) || (a.fecha + a.hora).localeCompare(b.fecha + b.hora); }
+    }[S.sort];
+    return out.sort(cmp);
+  }
+
+  function renderEstadoChips() {
+    var host = $('#estado-chips'); host.innerHTML = '';
+    ESTADOS.forEach(function (e) {
+      var n = S.reservas.filter(function (r) { return r.estado === e.id; }).length;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip t-' + e.tone + (S.estados[e.id] ? ' on' : '');
+      b.setAttribute('aria-pressed', S.estados[e.id] ? 'true' : 'false');
+      b.innerHTML = '<svg class="i"><use href="#' + e.ico + '"/></svg>' + e.n + '<span class="mono n">' + n + '</span>';
+      b.addEventListener('click', function () {
+        if (S.estados[e.id]) delete S.estados[e.id]; else S.estados[e.id] = true;
+        S.view = ''; markView(); renderEstadoChips(); renderList();
+      });
+      host.appendChild(b);
+    });
+  }
+
+  function renderList() {
+    var arr = filtered(), host = $('#list');
+    host.innerHTML = '';
+    $('#empty').hidden = arr.length > 0;
+    $('#list-count').textContent = arr.length + ' de ' + S.reservas.length + ' horas' +
+      (S.view === 'proximas' ? ' · vista Próximas' : S.view === 'historial' ? ' · vista Historial' : S.view === 'todas' ? ' · vista Todas' : ' · filtro personalizado');
+    arr.forEach(function (r, i) {
+      var e = espById(r.esp), p = proById(r.pro), st = estById(r.estado), d = parse(r.fecha);
+      var past = r.fecha < TODAYISO;
+      var live = r.estado === 'confirmada' || r.estado === 'pendiente';
+      var card = document.createElement('article');
+      card.className = 'card res t-' + st.tone;
+      card.dataset.card = r.id;
+      card.style.setProperty('--d', (i * 45) + 'ms');
+      card.innerHTML =
+        '<label class="check res-check"><input type="checkbox" data-sel="' + r.id + '"' + (S.sel[r.id] ? ' checked' : '') + '>' +
+        '<span class="box"><svg class="i"><use href="#i-check"/></svg></span><span class="sr">Seleccionar ' + esc(r.folio) + '</span></label>' +
+        '<div class="res-date"><strong class="mono">' + d.getDate() + '</strong><small>' + esc(fmtShort.format(d).split(' ').pop().replace('.', '')) + '</small><em class="mono">' + r.hora + '</em></div>' +
+        '<div class="res-main">' +
+          '<div class="res-top"><span class="badge t-' + st.tone + '"><svg class="i"><use href="#' + st.ico + '"/></svg>' + st.n + '</span>' +
+          '<span class="folio mono">' + esc(r.folio) + '</span>' + (past ? '<span class="badge ghost">pasada</span>' : '') + '</div>' +
+          '<h3>' + esc(e.n) + '</h3>' +
+          '<p class="res-meta"><svg class="i"><use href="#i-user"/></svg>' + esc(p.n) +
+          '<span class="sep">·</span><svg class="i"><use href="#i-pin"/></svg>' + esc(p.sede) +
+          '<span class="sep">·</span><svg class="i"><use href="#i-clock"/></svg>' + e.dur + ' min</p>' +
+          (r.motivo ? '<p class="res-motivo">' + esc(r.motivo) + '</p>' : '') +
+        '</div>' +
+        '<div class="res-act">' +
+          '<button class="btn btn-ghost btn-sm" type="button" data-act="detail" data-id="' + r.id + '"><svg class="i"><use href="#i-right"/></svg> Detalle</button>' +
+          (live && !past ? '<button class="btn btn-ghost btn-sm" type="button" data-act="reprog" data-id="' + r.id + '"><svg class="i"><use href="#i-edit"/></svg> Reprogramar</button>' : '') +
+          (live ? '<button class="btn btn-danger btn-sm" type="button" data-act="cancel" data-id="' + r.id + '"><svg class="i"><use href="#i-x"/></svg> Cancelar</button>' : '') +
+          (r.estado === 'cancelada' ? '<button class="btn btn-ghost btn-sm" type="button" data-act="del" data-id="' + r.id + '"><svg class="i"><use href="#i-trash"/></svg> Eliminar</button>' : '') +
+        '</div>';
+      host.appendChild(card);
+    });
+    var n = Object.keys(S.sel).length;
+    $('#bulk').hidden = n === 0;
+    $('#bulk-n').textContent = n;
+    var all = $('#sel-all');
+    all.checked = arr.length > 0 && arr.every(function (r) { return S.sel[r.id]; });
+    all.indeterminate = !all.checked && arr.some(function (r) { return S.sel[r.id]; });
+  }
+
+  function markView() {
+    $$('.view-btn').forEach(function (b) { b.classList.toggle('on', b.dataset.view === S.view); });
+  }
+
+  function applyView(v) {
+    S.view = v; S.estados = {}; S.esp = ''; S.q = ''; S.sel = {};
+    $('#q-inp').value = ''; $('#q-clear').hidden = true; $('#esp-filter').value = '';
+    S.sort = v === 'proximas' ? 'fecha-asc' : 'fecha-desc';
+    $('#sort-sel').value = S.sort;
+    markView(); renderEstadoChips(); renderList();
+  }
+
+  function byId(id) { return S.reservas.filter(function (r) { return r.id === id; })[0]; }
+
+  function cancelRes(ids) {
+    var snap = ids.map(function (id) { var r = byId(id); return { id: id, estado: r.estado }; });
+    ids.forEach(function (id) { byId(id).estado = 'cancelada'; delete S.sel[id]; });
+    save(); renderEstadoChips(); renderList();
+    if (S.drawerId && ids.indexOf(S.drawerId) > -1) fillDrawer(S.drawerId);
+    bumpReq(ids.length); pushLog('DELETE /reservar (simulado) HTTP/1.1', 200);
+    toast(ids.length === 1 ? 'Hora cancelada. El cupo quedó liberado.' : ids.length + ' horas canceladas.', 'warn', {
+      label: 'Deshacer', fn: function () {
+        snap.forEach(function (s) { var r = byId(s.id); if (r) r.estado = s.estado; });
+        save(); renderEstadoChips(); renderList();
+        if (S.drawerId) fillDrawer(S.drawerId);
+        toast('Cancelación revertida.', 'ok');
+      }
+    });
+  }
+
+  function deleteRes(id) {
+    var i = -1;
+    S.reservas.forEach(function (r, k) { if (r.id === id) i = k; });
+    if (i < 0) return;
+    var removed = S.reservas.splice(i, 1)[0];
+    delete S.sel[id]; save(); renderEstadoChips(); renderList(); closeDrawer();
+    toast('Reserva ' + removed.folio + ' eliminada del listado.', 'danger', {
+      label: 'Deshacer', fn: function () {
+        S.reservas.splice(i, 0, removed); save(); renderEstadoChips(); renderList();
+        toast('Reserva restaurada.', 'ok');
+      }
+    });
+  }
+
+  /* ───────── drawer ───────── */
+  var lastFocus = null;
+  function openDrawer(id) {
+    lastFocus = document.activeElement;
+    S.drawerId = id; fillDrawer(id);
+    $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden', 'false');
+    $('#scrim').hidden = false;
+    requestAnimationFrame(function () { $('#scrim').classList.add('on'); });
+    document.body.classList.add('locked');
+    setTimeout(function () { $('#drawer-close').focus(); }, 60);
+  }
+  function fillDrawer(id) {
+    var r = byId(id); if (!r) return;
+    var e = espById(r.esp), p = proById(r.pro), st = estById(r.estado), d = parse(r.fecha);
+    var live = r.estado === 'confirmada' || r.estado === 'pendiente';
+    var past = r.fecha < TODAYISO;
+    $('#drawer-title').textContent = r.folio;
+    $('#drawer-body').innerHTML =
+      '<div class="d-hero t-' + st.tone + '"><span class="badge t-' + st.tone + '"><svg class="i"><use href="#' + st.ico + '"/></svg>' + st.n + '</span>' +
+      '<h4>' + esc(e.n) + '</h4><p class="mono">' + esc(cap(fmtLong.format(d))) + ' · ' + r.hora + ' hrs</p></div>' +
+      '<table class="mini-table kv"><tbody>' +
+      '<tr><th>Paciente</th><td>' + esc(r.paciente) + '</td></tr>' +
+      '<tr><th>Profesional</th><td>' + esc(p.n) + '</td></tr>' +
+      '<tr><th>Sede</th><td>' + esc(p.sede) + '</td></tr>' +
+      '<tr><th>Duración</th><td class="mono">' + e.dur + ' min</td></tr>' +
+      '<tr><th>Previsión</th><td>' + esc(r.prevision) + '</td></tr>' +
+      '<tr><th>Motivo</th><td>' + (r.motivo ? esc(r.motivo) : '<em>sin detalle</em>') + '</td></tr>' +
+      '<tr><th>Creada</th><td class="mono">' + esc(new Date(r.creada).toLocaleString('es-CL')) + '</td></tr>' +
+      '</tbody></table>' +
+      '<div class="d-note"><svg class="i"><use href="#i-shield"/></svg><span>Registro ficticio guardado solo en este navegador. No existe ficha clínica asociada.</span></div>';
+    $('#drawer-foot').innerHTML =
+      '<button class="btn btn-ghost btn-sm" type="button" data-act="txt" data-id="' + r.id + '"><svg class="i"><use href="#i-dl"/></svg> Comprobante</button>' +
+      (live && !past ? '<button class="btn btn-ghost btn-sm" type="button" data-act="reprog" data-id="' + r.id + '"><svg class="i"><use href="#i-edit"/></svg> Reprogramar</button>' : '') +
+      (live ? '<button class="btn btn-danger btn-sm" type="button" data-act="cancel" data-id="' + r.id + '"><svg class="i"><use href="#i-x"/></svg> Cancelar hora</button>' : '');
+  }
+  function closeDrawer() {
+    $('#drawer').classList.remove('open'); $('#drawer').setAttribute('aria-hidden', 'true');
+    $('#scrim').classList.remove('on');
+    setTimeout(function () { if (!$('#scrim').classList.contains('on')) $('#scrim').hidden = true; }, 240);
+    document.body.classList.remove('locked');
+    S.drawerId = null;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  /* ───────── modales ───────── */
+  function openModal(sel) {
+    lastFocus = document.activeElement;
+    var m = $(sel); m.classList.add('open'); m.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('locked');
+    var f = m.querySelector('input,select,button');
+    setTimeout(function () { if (f) f.focus(); }, 60);
+  }
+  function closeModals() {
+    $$('.modal').forEach(function (m) { m.classList.remove('open'); m.setAttribute('aria-hidden', 'true'); });
+    if (!$('#drawer').classList.contains('open')) document.body.classList.remove('locked');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  var confirmFn = null;
+  function askConfirm(title, text, okLabel, fn) {
+    $('#cf-title-txt').textContent = title;
+    $('#cf-text').textContent = text;
+    $('#cf-ok').textContent = okLabel;
+    confirmFn = fn; openModal('#modal-confirm');
+  }
+
+  function openReprog(id) {
+    var r = byId(id); if (!r) return;
+    S.rpId = id; S.rpFecha = r.fecha; S.rpHora = '';
+    $('#rp-current').innerHTML = 'Actual: <strong>' + esc(espById(r.esp).n) + '</strong> con ' + esc(proById(r.pro).n) +
+      ' el <span class="mono">' + esc(fmtShort.format(parse(r.fecha))) + ' · ' + r.hora + '</span>';
+    var inp = $('#rp-fecha'); inp.min = TODAYISO; inp.max = MAXISO; inp.value = r.fecha;
+    $('#rp-err').hidden = true;
+    rpSlots(); openModal('#modal-reprog');
+  }
+  function rpSlots() {
+    var r = byId(S.rpId); if (!r) return;
+    var arr = renderSlots($('#rp-slots'), r.pro, S.rpFecha, S.rpHora, r.id, function (h) {
+      S.rpHora = h; rpSlots(); $('#rp-err').hidden = true;
+    });
+    var free = arr.filter(function (s) { return s.estado === 'libre'; }).length;
+    $('#rp-count').textContent = arr.length ? free + ' bloques libres' : 'Sin disponibilidad';
+  }
+  function saveReprog() {
+    if (!S.rpHora) { $('#rp-err').hidden = false; return; }
+    var r = byId(S.rpId), prev = { fecha: r.fecha, hora: r.hora, estado: r.estado };
+    r.fecha = S.rpFecha; r.hora = S.rpHora; r.estado = 'confirmada';
+    save(); renderEstadoChips(); renderList(); closeModals();
+    if (S.drawerId === r.id) fillDrawer(r.id);
+    refreshSlots(); bumpReq(2); pushLog('PATCH /reservar (simulado) HTTP/1.1', 200);
+    toast('Hora reprogramada para el ' + fmtShort.format(parse(r.fecha)) + ' a las ' + r.hora + '.', 'ok', {
+      label: 'Deshacer', fn: function () {
+        r.fecha = prev.fecha; r.hora = prev.hora; r.estado = prev.estado;
+        save(); renderEstadoChips(); renderList(); refreshSlots();
+        if (S.drawerId === r.id) fillDrawer(r.id);
+        toast('Reprogramación revertida.', 'ok');
+      }
+    });
+  }
+
+  /* ───────── exportaciones ───────── */
+  function download(name, text, mime) {
+    try {
+      var blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click();
+      document.body.removeChild(a); setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      return true;
+    } catch (e) { return false; }
+  }
+  function comprobante(id) {
+    var r = byId(id), e = espById(r.esp), p = proById(r.pro);
+    var t = [
+      'CENTRO MÉDICO VIDA SANA — COMPROBANTE DE RESERVA (DEMO)',
+      '========================================================',
+      'Folio        : ' + r.folio,
+      'Estado       : ' + estById(r.estado).n,
+      'Paciente     : ' + r.paciente + ' (dato ficticio)',
+      'Especialidad : ' + e.n,
+      'Profesional  : ' + p.n,
+      'Sede         : ' + p.sede,
+      'Fecha        : ' + cap(fmtLong.format(parse(r.fecha))),
+      'Bloque       : ' + r.hora + ' hrs (' + e.dur + ' min)',
+      'Previsión    : ' + r.prevision,
+      'Motivo       : ' + (r.motivo || 'sin detalle'),
+      'Emitido      : ' + new Date().toLocaleString('es-CL'),
+      '',
+      'Documento generado por una aplicación web estática de uso académico.',
+      'No constituye una reserva real ni contiene datos personales válidos.'
+    ].join('\r\n');
+    if (download('comprobante-' + r.folio + '.txt', t)) toast('Comprobante ' + r.folio + ' descargado.', 'ok');
+    else toast('Tu navegador bloqueó la descarga.', 'danger');
+  }
+  function exportCSV() {
+    var arr = filtered();
+    if (!arr.length) { toast('No hay filas que exportar con el filtro actual.', 'warn'); return; }
+    var head = ['Folio', 'Estado', 'Paciente', 'Especialidad', 'Profesional', 'Sede', 'Fecha', 'Hora', 'Prevision', 'Motivo'];
+    var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+    var rows = arr.map(function (r) {
+      return [r.folio, estById(r.estado).n, r.paciente, espById(r.esp).n, proById(r.pro).n, proById(r.pro).sede, r.fecha, r.hora, r.prevision, r.motivo].map(q).join(';');
+    });
+    var csv = '\uFEFF' + head.map(q).join(';') + '\r\n' + rows.join('\r\n');
+    if (download('reservas-vidasana.csv', csv, 'text/csv;charset=utf-8')) toast(arr.length + ' reservas exportadas a CSV.', 'ok');
+    else toast('Tu navegador bloqueó la descarga.', 'danger');
+  }
+
+  /* ───────── toasts ───────── */
+  function toast(msg, kind, action) {
+    var host = $('#toasts');
+    while (host.children.length >= 3) host.removeChild(host.firstChild);
+    var ico = { ok: 'i-check', warn: 'i-alert', danger: 'i-alert', info: 'i-info' }[kind || 'info'];
+    var el = document.createElement('div');
+    el.className = 'toast t-' + (kind || 'info');
+    el.innerHTML = '<svg class="i"><use href="#' + ico + '"/></svg><p>' + esc(msg) + '</p>' +
+      (action ? '<button class="t-act" type="button">' + esc(action.label) + '</button>' : '') +
+      '<button class="t-x" type="button" aria-label="Cerrar aviso"><svg class="i"><use href="#i-x"/></svg></button>';
+    host.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add('on'); });
+    var timer = setTimeout(close, action ? 9000 : 5000);
+    function close() { clearTimeout(timer); el.classList.remove('on'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 260); }
+    el.querySelector('.t-x').addEventListener('click', close);
+    if (action) el.querySelector('.t-act').addEventListener('click', function () { close(); action.fn(); });
+  }
+
+  /* ───────── métricas y logs (simulados) ───────── */
+  var M = { lat: [], cpu: [], mem: [], req: [] };
+  (function seedM() {
+    var r = rng(20261114);
+    for (var i = 0; i < 60; i++) {
+      M.lat.push(34 + r() * 26); M.cpu.push(0.2 + r() * 0.9);
+      M.mem.push(8.4 + r() * 1.8); M.req.push(Math.floor(r() * 4));
+    }
+  })();
+  function bumpReq(n) { S.req += n; M.req[M.req.length - 1] += n; }
+  function poly(arr, max) {
+    var n = arr.length, out = [];
+    for (var i = 0; i < n; i++) out.push((i / (n - 1) * 300).toFixed(1) + ',' + (78 - Math.min(1, arr[i] / max) * 72).toFixed(1));
+    return out.join(' ');
+  }
+  function drawMetrics() {
+    var n = S.range;
+    var sets = [['lat', 300, 'm-lat', ' ms', 0], ['cpu', 4, 'm-cpu', ' %', 1], ['mem', 128, 'm-mem', ' MiB', 1], ['req', 12, 'm-req', '', 0]];
+    sets.forEach(function (s) {
+      var arr = M[s[0]].slice(-n);
+      var p = poly(arr, s[1]);
+      $('#sp-' + s[0]).setAttribute('points', p);
+      $('#sp-' + s[0] + '-g').setAttribute('points', p);
+      var v = arr[arr.length - 1];
+      $('#' + s[2]).textContent = (s[4] ? v.toFixed(s[4]) : Math.round(v)) + s[3];
+    });
+    $('#ro-lat').textContent = Math.round(M.lat[M.lat.length - 1]);
+    $('#ro-cpu').textContent = M.cpu[M.cpu.length - 1].toFixed(1);
+    $('#ro-mem').textContent = M.mem[M.mem.length - 1].toFixed(1);
+    $('#m-req').textContent = S.req;
+  }
+  function tickMetrics() {
+    if (document.hidden) return;
+    var last = function (a) { return a[a.length - 1]; };
+    var drift = function (v, min, max, step) { return Math.max(min, Math.min(max, v + (Math.random() - 0.5) * step)); };
+    M.lat.push(drift(last(M.lat), 26, 120, 22));
+    M.cpu.push(drift(last(M.cpu), 0.05, 3.2, 0.5));
+    M.mem.push(drift(last(M.mem), 7.8, 16, 0.6));
+    M.req.push(Math.random() < 0.55 ? Math.floor(Math.random() * 3) : 0);
+    ['lat', 'cpu', 'mem', 'req'].forEach(function (k) { if (M[k].length > 60) M[k].shift(); });
+    S.req += M.req[M.req.length - 1];
+    drawMetrics();
+  }
+
+  var LOGS = [];
+  var PATHS = ['/', '/styles.css', '/index.html', '/', '/favicon.ico'];
+  function stamp() {
+    var d = new Date();
+    var mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+    return pad(d.getDate()) + '/' + mo + '/' + d.getFullYear() + ':' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ' +0000';
+  }
+  function pushLog(req, code) {
+    var bytes = 380 + Math.floor(Math.random() * 4200);
+    LOGS.push('172.17.0.1 - - [' + stamp() + '] "' + req + '" ' + code + ' ' + bytes + ' "-" "Mozilla/5.0 (Docker local demo)"');
+    if (LOGS.length > 60) LOGS.shift();
+    renderLogs();
+  }
+  function tickLogs() {
+    if (document.hidden || S.logsPaused) return;
+    var p = PATHS[Math.floor(Math.random() * PATHS.length)];
+    pushLog('GET ' + p + ' HTTP/1.1', p === '/favicon.ico' ? 404 : 200);
+  }
+  function renderLogs() {
+    var host = $('#log-body');
+    host.innerHTML = LOGS.map(function (l) {
+      var m = l.match(/" (\d{3}) /);
+      var cls = m ? (+m[1] < 300 ? 'l-ok' : +m[1] < 400 ? 'l-info' : 'l-warn') : '';
+      return '<span class="' + cls + '">' + esc(l) + '</span>';
+    }).join('\n') || '<span class="l-dim">Sin líneas. El flujo está pausado o el buffer fue limpiado.</span>';
+    $('#log-n').textContent = LOGS.length + (LOGS.length === 1 ? ' línea' : ' líneas');
+    host.scrollTop = host.scrollHeight;
+  }
+
+  var CHECKS = [
+    ['Contenedor en estado Up', 'docker compose ps'],
+    ['Nginx responde HTTP 200 en /', 'curl -I http://localhost:8080'],
+    ['Puerto 8080 publicado hacia 80', '0.0.0.0:8080->80/tcp'],
+    ['Hoja de estilos cargada', 'GET /styles.css 200'],
+    ['.env fuera del control de versiones', 'git ls-files'],
+    ['Imagen versionada, sin latest', 'reserva-horas-web:1.0.0']
+  ];
+  function renderChecks() {
+    $('#check-list').innerHTML = CHECKS.map(function (c) {
+      return '<li><span class="ck"><svg class="i"><use href="#i-check"/></svg></span><span><strong>' + esc(c[0]) + '</strong><code>' + esc(c[1]) + '</code></span></li>';
+    }).join('');
+  }
+
+  /* ───────── tema ───────── */
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    store.raw('vital.theme', t);
+    var b = $('#theme-btn');
+    b.setAttribute('aria-pressed', t === 'light' ? 'true' : 'false');
+    b.title = t === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro';
+  }
+
+  /* ───────── init ───────── */
+  function init() {
+    setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark');
+    $('#theme-btn').addEventListener('click', function () {
+      setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    buildEspChips(); buildProfSel(); buildDayStrip();
+    var fi = $('#fecha-inp'); fi.min = TODAYISO; fi.max = MAXISO; fi.value = S.form.fecha;
+    fi.addEventListener('change', function () {
+      S.form.fecha = fi.value; S.form.hora = '';
+      buildDayStrip(); refreshSlots(); summary(); hideErr('fecha');
+    });
+    $('#prof-sel').addEventListener('change', function () {
+      S.form.pro = this.value; S.form.hora = '';
+      buildProfSel(); refreshSlots(); summary(); hideErr('prof');
+    });
+    $('#prev-sel').addEventListener('change', summary);
+    $('#nombre-inp').addEventListener('input', function () { hideErr('nombre'); });
+    $('#ficticio-chk').addEventListener('change', function () { hideErr('chk'); });
+    $('#motivo-inp').addEventListener('input', function () { $('#motivo-count').textContent = this.value.length; });
+    $('#book-form').addEventListener('submit', submitForm);
+    $('#form-reset').addEventListener('click', function () {
+      S.form = { esp: '', pro: '', fecha: iso(nextBusiness(TODAY, 1)), hora: '' };
+      $('#book-form').reset(); fi.value = S.form.fecha; $('#motivo-count').textContent = '0';
+      ['esp', 'prof', 'fecha', 'hora', 'nombre', 'chk'].forEach(hideErr);
+      buildEspChips(); buildProfSel(); buildDayStrip(); refreshSlots(); summary();
+      toast('Formulario limpiado.', 'info');
+    });
+    refreshSlots(); summary();
+
+    var ef = $('#esp-filter');
+    ESP.forEach(function (e) { var o = document.createElement('option'); o.value = e.id; o.textContent = e.n; ef.appendChild(o); });
+    ef.addEventListener('change', function () { S.esp = this.value; S.view = ''; markView(); renderList(); });
+    $('#sort-sel').addEventListener('change', function () { S.sort = this.value; renderList(); });
+    $('#q-inp').addEventListener('input', function () {
+      S.q = this.value; $('#q-clear').hidden = !this.value; renderList();
+    });
+    $('#q-clear').addEventListener('click', function () {
+      S.q = ''; $('#q-inp').value = ''; this.hidden = true; renderList(); $('#q-inp').focus();
+    });
+    $$('.view-btn').forEach(function (b) { b.addEventListener('click', function () { applyView(b.dataset.view); }); });
+    $('#empty-clear').addEventListener('click', function () { applyView('todas'); });
+    $('#sel-all').addEventListener('change', function () {
+      var arr = filtered(), on = this.checked;
+      arr.forEach(function (r) { if (on) S.sel[r.id] = true; else delete S.sel[r.id]; });
+      renderList();
+    });
+    $('#bulk-clear').addEventListener('click', function () { S.sel = {}; renderList(); });
+    $('#bulk-cancel').addEventListener('click', function () {
+      var ids = Object.keys(S.sel).filter(function (id) {
+        var r = byId(id); return r && (r.estado === 'confirmada' || r.estado === 'pendiente');
+      });
+      if (!ids.length) { toast('Ninguna de las seleccionadas se puede cancelar.', 'warn'); return; }
+      askConfirm('Cancelar ' + ids.length + (ids.length === 1 ? ' hora' : ' horas'),
+        'Los cupos quedarán liberados. Podrás deshacer la acción desde el aviso.', 'Cancelar horas',
+        function () { closeModals(); cancelRes(ids); });
+    });
+    $('#export-csv').addEventListener('click', exportCSV);
+    $('#reset-demo').addEventListener('click', function () {
+      askConfirm('Restaurar datos de demostración',
+        'Se reemplazarán todas las reservas por las cinco originales de ejemplo. Esta acción no se puede deshacer.',
+        'Restaurar', function () {
+          S.reservas = seed(); S.sel = {}; save(); closeModals();
+          applyView('proximas'); refreshSlots(); closeDrawer();
+          toast('Datos de demostración restaurados.', 'ok');
+        });
+    });
+
+    $('#list').addEventListener('click', function (ev) {
+      var chk = ev.target.closest ? ev.target.closest('input[data-sel]') : null;
+      if (chk) {
+        if (chk.checked) S.sel[chk.dataset.sel] = true; else delete S.sel[chk.dataset.sel];
+        renderList(); return;
+      }
+      var b = ev.target.closest ? ev.target.closest('button[data-act]') : null;
+      if (!b) return;
+      handleAct(b.dataset.act, b.dataset.id);
+    });
+    $('#drawer-foot').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('button[data-act]') : null;
+      if (b) handleAct(b.dataset.act, b.dataset.id);
+    });
+    $('#drawer-close').addEventListener('click', closeDrawer);
+    $('#scrim').addEventListener('click', closeDrawer);
+    $$('[data-close-modal]').forEach(function (b) { b.addEventListener('click', closeModals); });
+    $$('.modal').forEach(function (m) {
+      m.addEventListener('click', function (e) { if (e.target === m) closeModals(); });
+    });
+    $('#cf-ok').addEventListener('click', function () { if (confirmFn) confirmFn(); });
+    $('#rp-fecha').addEventListener('change', function () {
+      S.rpFecha = this.value; S.rpHora = ''; rpSlots();
+    });
+    $('#rp-save').addEventListener('click', saveReprog);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if ($('.modal.open')) { closeModals(); return; }
+        if ($('#drawer').classList.contains('open')) { closeDrawer(); return; }
+      }
+      if (e.key === 'Tab') {
+        var box = $('.modal.open .modal-box') || ($('#drawer').classList.contains('open') ? $('#drawer') : null);
+        if (!box) return;
+        var f = $$('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])', box)
+          .filter(function (el) { return el.offsetParent !== null; });
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+
+    $('#range-sel').addEventListener('change', function () { S.range = +this.value; drawMetrics(); });
+    $('#logs-toggle').addEventListener('click', function () {
+      S.logsPaused = !S.logsPaused;
+      this.setAttribute('aria-pressed', S.logsPaused ? 'true' : 'false');
+      $('#logs-toggle-txt').textContent = S.logsPaused ? 'Reanudar' : 'Pausar';
+      toast(S.logsPaused ? 'Flujo de logs pausado.' : 'Flujo de logs reanudado.', 'info');
+    });
+    $('#logs-clear').addEventListener('click', function () { LOGS = []; renderLogs(); toast('Buffer de logs limpiado.', 'info'); });
+    $('#logs-copy').addEventListener('click', function () {
+      var txt = LOGS.join('\n');
+      if (!txt) { toast('No hay líneas que copiar.', 'warn'); return; }
+      var done = function () { toast(LOGS.length + ' líneas copiadas al portapapeles.', 'ok'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(done, fallback);
+      } else fallback();
+      function fallback() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          var ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          ok ? done() : toast('No se pudo copiar en este navegador.', 'danger');
+        } catch (e) { toast('No se pudo copiar en este navegador.', 'danger'); }
+      }
+    });
+
+    renderChecks(); renderEstadoChips(); markView(); renderList();
+    pushLog('GET / HTTP/1.1', 200); pushLog('GET /styles.css HTTP/1.1', 200);
+    S.req = 2; drawMetrics();
+
+    var t0 = Date.now();
+    setInterval(function () {
+      var d = new Date();
+      $('#hero-clock').textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      var s = Math.floor((Date.now() - t0) / 1000);
+      $('#uptime').textContent = pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60);
+    }, 1000);
+    setInterval(tickMetrics, 2600);
+    setInterval(tickLogs, 4200);
+
+    if ('IntersectionObserver' in window) {
+      var ro = new IntersectionObserver(function (en) {
+        en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); ro.unobserve(x.target); } });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      $$('[data-reveal]').forEach(function (el) { ro.observe(el); });
+
+      var links = {};
+      $$('[data-nav]').forEach(function (a) { links[a.dataset.nav] = a; });
+      var so = new IntersectionObserver(function (en) {
+        en.forEach(function (x) {
+          if (x.isIntersecting) {
+            Object.keys(links).forEach(function (k) { links[k].classList.remove('active'); });
+            if (links[x.target.id]) links[x.target.id].classList.add('active');
+          }
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      ['reservar', 'mis-horas', 'atencion', 'estado'].forEach(function (id) { var el = $('#' + id); if (el) so.observe(el); });
+    } else {
+      $$('[data-reveal]').forEach(function (el) { el.classList.add('in'); });
+    }
+  }
+
+  function handleAct(act, id) {
+    if (act === 'detail') openDrawer(id);
+    else if (act === 'reprog') openReprog(id);
+    else if (act === 'txt') comprobante(id);
+    else if (act === 'cancel') {
+      var r = byId(id);
+      askConfirm('Cancelar la hora ' + r.folio, 'El cupo del ' + fmtShort.format(parse(r.fecha)) + ' a las ' + r.hora + ' quedará disponible para otro paciente. Podrás deshacerlo desde el aviso.', 'Cancelar hora',
+        function () { closeModals(); cancelRes([id]); });
+    } else if (act === 'del') {
+      var r2 = byId(id);
+      askConfirm('Eliminar ' + r2.folio, 'Se quitará del listado local. Podrás deshacerlo desde el aviso.', 'Eliminar',
+        function () { closeModals(); deleteRes(id); });
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

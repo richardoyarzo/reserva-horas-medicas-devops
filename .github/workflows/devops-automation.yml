@@ -1,0 +1,46 @@
+name: Validacion DevOps
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar archivos obligatorios
+        run: |
+          test -f src/index.html
+          test -f src/styles.css
+          test -f Dockerfile
+          test -f docker-compose.yml
+          test -f README.md
+          test -f .gitignore
+          test -f .env.example
+          echo "Estructura verificada correctamente"
+
+      - name: Verificar que no se suba el archivo .env
+        run: |
+          if git ls-files | grep -x ".env"; then
+            echo "ERROR: el archivo .env no debe versionarse"
+            exit 1
+          fi
+          echo "Sin archivos .env versionados"
+
+      - name: Construir la imagen
+        run: docker build -t reserva-horas-web:ci .
+
+      - name: Probar el servicio
+        run: |
+          docker run -d --name prueba-ci -p 8080:80 reserva-horas-web:ci
+          sleep 5
+          curl -fsS -I http://localhost:8080
+          docker logs prueba-ci
+
+      - name: Limpiar
+        if: always()
+        run: docker rm -f prueba-ci
