@@ -117,7 +117,7 @@
         </p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="#reservar"><svg class="i"><use href="#i-cal"/></svg> Reservar una hora</a>
-          <a class="btn btn-ghost" href="#estado"><svg class="i"><use href="#i-activity"/><use href="#i-pulse"/></svg> Ver estado del servicio</a>
+          <a class="btn btn-ghost" href="#estado"><svg class="i"><use href="#i-pulse"/></svg> Ver estado del servicio</a>
         </div>
         <dl class="hero-stats">
           <div><dt>Especialidades</dt><dd>6</dd></div>
@@ -400,6 +400,7 @@
           <h3>Contacto</h3>
           <ul class="plain">
             <li><svg class="i"><use href="#i-phone"/></svg> <span class="mono">600 123 456</span> <em>(ficticio)</em></li>
+            <li><svg class="i"><use href="#i-phone"/></svg> WhatsApp mesa de ayuda: <span class="mono">+56 9 1234 5678</span> <em>(ficticio)</em></li>
             <li><svg class="i"><use href="#i-mail"/></svg> <span class="mono">mesa.ayuda@vidasana.test</span></li>
             <li><svg class="i"><use href="#i-info"/></svg> Anexo interno <span class="mono">100</span></li>
           </ul>
@@ -702,7 +703,7 @@
   var nextFolio = function () {
     var max = 155;
     S.reservas.forEach(function (r) { var n = parseInt(r.folio.split('-')[2], 10); if (n > max) max = n; });
-    return 'CM-2026-' + pad(max + 1).padStart(4, '0');
+    return 'CM-2026-' + String(max + 1).padStart(4, '0');
   };
 
   /* ───────── disponibilidad ───────── */
